@@ -31,13 +31,16 @@ fn setup(
 }
 fn lissajous(p: vec2<f32>, amp: f32, freq: vec2<f32>, phase: vec2<f32>, n: u32) -> f32 {
     var t = 0.0;
-    let dt = 0.02;
+    let dt = 0.05;
     var d = 1000000000.0;
-    for (var i = 0; i < 1000; i++) {
-        let r = amp * vec2<f32>(cos(freq.x * t), sin(freq.y * t));
-        // d = min(d, smud::sd_circle(r - p, 1.0));
-        d = min(d, length(r - p));
+    var a = amp * vec2<f32>(cos(freq.x * t), sin(freq.y * t));
+    for (var i = 0; i < 100; i++) {
         t += dt;
+        let b = amp * vec2<f32>(cos(freq.x * t), sin(freq.y * t));
+        // d = min(d, smud::sd_circle(r - p, 1.0));
+        // d = min(d, length(r - p));
+        d = min(d, smud::sd_line(p, a, b));
+        a = b;
     }
     return d;
 "),
