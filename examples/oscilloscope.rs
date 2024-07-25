@@ -24,7 +24,23 @@ fn setup(
         shape: SmudShape {
             // color: css::GREEN.into(),
             color: css::ORANGE.into(),
-            sdf: asset_server.load("bevy.wgsl"),
+            // sdf: asset_server.load("bevy.wgsl"),
+            sdf: shaders.add_sdf_body(r"
+    // return smud::sd_circle(p, 70.);
+    return lissajous(p, 70., vec2<f32>(1.0, 1.1), vec2<f32>(0, 0), 20u);
+}
+fn lissajous(p: vec2<f32>, amp: f32, freq: vec2<f32>, phase: vec2<f32>, n: u32) -> f32 {
+    var t = 0.0;
+    let dt = 0.02;
+    var d = 1000000000.0;
+    for (var i = 0; i < 1000; i++) {
+        let r = amp * vec2<f32>(cos(freq.x * t), sin(freq.y * t));
+        // d = min(d, smud::sd_circle(r - p, 1.0));
+        d = min(d, length(r - p));
+        t += dt;
+    }
+    return d;
+"),
             fill: shaders.add_fill_body(
                 r"
 var col = color.rgb / sqrt(abs(d));
